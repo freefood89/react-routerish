@@ -83,7 +83,7 @@ type S = {
 }
 
 class App extends React.Component<{}, S> {
-	state = {
+	state: S = {
 		views: {
 			location: routes.AA,
 			params: null
@@ -120,10 +120,11 @@ class App extends React.Component<{}, S> {
 					</Views>
 					<button
 						onClick={() => {
-							if (this.currentLocation() === routes.AA)
-								return this.showMessage('sushi')
-
-							return this.resetMessage()
+							if (this.currentLocation() === routes.AA) {
+                this.showMessage('sushi')
+              } else {
+                this.resetMessage()
+              }
 						}}
 						>
 						{ this.currentLocation() === routes.AA ? 'Show Message' : 'Reset' }
