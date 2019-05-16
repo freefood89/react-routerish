@@ -1,31 +1,55 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import logo from './logo.svg';
 import './App.css';
-
-const {Provider, Consumer} = React.createContext()
-
-function View(path) {
-	return function Wrapper(Component) {
-		return function(props) {
-			return (
-				<Consumer>
-					{({location, params}) => {
-						if (location === path) {
-							return <Component params={params} {...props} />
-						} else {
-							return null
-						}
-					}}
-				</Consumer>
-			)
-		}
-
-	}
-}
 
 const routes = {
 	AA: 'AA',
 	BB: 'BB'
+}
+
+type RouterState = {
+  location: string,
+  params?: any
+}
+
+const {
+  Provider,
+  Consumer
+}: React.Context<RouterState> = React.createContext({ location: routes.AA })
+
+const View = (path: string) =>
+  <Config: {}>(Component: React.AbstractComponent<Config>): React.AbstractComponent<$Diff<Config, {params: any}>> => {
+    return function(props: $Diff<Config, {params: any}>) {
+      return (
+        <Consumer>
+          {({location, params}) => {
+            if (location === path) {
+              return (
+                <React.Fragment>
+                  <Component params={params} {...props} />
+                </React.Fragment>
+              )
+            } else {
+              return null
+            }
+          }}
+        </Consumer>
+      )
+    }
+  }
+
+type Props = {
+  routerState: RouterState,
+  children: React.Node
+}
+
+const Views = (props: Props) => {
+  return (
+    <Provider value={props.routerState}>
+      {props.children}
+    </Provider>
+  )
 }
 
 const AAView = View(routes.AA)(
@@ -49,17 +73,15 @@ const BBView = View(routes.BB)(
 	}
 )
 
-class Views extends React.Component {
-	render() {
-		return (
-			<Provider value={this.props.viewsState}>
-				{this.props.children}
-			</Provider>
-		)
-	}
+
+
+
+
+type S = {
+  views: RouterState
 }
 
-class App extends React.Component {
+class App extends React.Component<{}, S> {
 	state = {
 		views: {
 			location: routes.AA,
@@ -67,20 +89,22 @@ class App extends React.Component {
 		}
 	}
 
+  setRouterState = (r: RouterState) => {
+    this.setState({ views: r })
+  }
+
 	currentLocation = () => {
 		return this.state.views.location
 	}
 
 	resetMessage = () => {
-		this.setState({ views: { location: routes.AA }})
+		this.setRouterState({ location: routes.AA })
 	}
 
-	showMessage = (message) => {
-		this.setState({
-			views: {
-				location: routes.BB,
-				params: message
-			}
+	showMessage = (message: string) => {
+		this.setRouterState({
+      location: routes.BB,
+      params: message
 		})
 	}
 
@@ -89,7 +113,7 @@ class App extends React.Component {
 			<div className="App">
 				<header className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
-					<Views viewsState={this.state.views}>
+					<Views routerState={this.state.views}>
 						<AAView />
 						<BBView style={{color: 'red'}}/>
 					</Views>
