@@ -62,20 +62,21 @@ const AAView = View(routes.AA)(
 	}
 )
 
+type BBProps = {
+  params: string,
+  color: string
+}
+
 // @View('BB')    <= looks like this with decorator syntax
-const BBView = View(routes.BB)(
-	function (props) {
+const BBView = View(routes.BB)<BBProps>(
+	function ({params, color, ...props}: BBProps) {
 		return (
-			<p {...props}>
-				{`This is not ${props.params}`}
+			<p style={{color: color}} {...props}>
+				{`This is not ${params}`}
 			</p>
 		)
 	}
 )
-
-
-
-
 
 type S = {
   views: RouterState
@@ -115,7 +116,7 @@ class App extends React.Component<{}, S> {
 					<img src={logo} className="App-logo" alt="logo" />
 					<Views routerState={this.state.views}>
 						<AAView />
-						<BBView style={{color: 'red'}}/>
+						<BBView color={'red'}/>
 					</Views>
 					<button
 						onClick={() => {
