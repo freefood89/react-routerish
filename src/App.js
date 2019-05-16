@@ -23,7 +23,12 @@ function View(path) {
 	}
 }
 
-const AAView = View('AA')(
+const routes = {
+	AA: 'AA',
+	BB: 'BB'
+}
+
+const AAView = View(routes.AA)(
 	function (props) {
 		return (
 			<p {...props}>
@@ -33,7 +38,8 @@ const AAView = View('AA')(
 	}
 )
 
-const BBView = View('BB')(
+// @View('BB')    <= looks like this with decorator syntax
+const BBView = View(routes.BB)(
 	function (props) {
 		return (
 			<p {...props}>
@@ -56,7 +62,7 @@ class Views extends React.Component {
 class App extends React.Component {
 	state = {
 		views: {
-			location: 'AA',
+			location: routes.AA,
 			params: null
 		}
 	}
@@ -66,13 +72,13 @@ class App extends React.Component {
 	}
 
 	resetMessage = () => {
-		this.setState({ views: { location: 'AA' }})
+		this.setState({ views: { location: routes.AA }})
 	}
 
 	showMessage = (message) => {
 		this.setState({
 			views: {
-				location: 'BB',
+				location: routes.BB,
 				params: message
 			}
 		})
@@ -89,13 +95,13 @@ class App extends React.Component {
 					</Views>
 					<button
 						onClick={() => {
-							if (this.currentLocation() === 'AA')
+							if (this.currentLocation() === routes.AA)
 								return this.showMessage('sushi')
 
 							return this.resetMessage()
 						}}
 						>
-						{ this.currentLocation() === 'AA' ? 'Show Message' : 'Reset' }
+						{ this.currentLocation() === routes.AA ? 'Show Message' : 'Reset' }
 					</button>
 				</header>
 			</div>
